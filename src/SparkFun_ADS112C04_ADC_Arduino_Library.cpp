@@ -38,7 +38,6 @@
 */
 
 #include "SparkFun_ADS112C04_ADC_Arduino_Library.h"
-#include "SparkFun_ADS122C04_ADC_Arduino_Library.h"
 
 SFE_ADS112C04::SFE_ADS112C04(void)
 {
