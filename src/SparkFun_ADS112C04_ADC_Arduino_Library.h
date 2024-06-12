@@ -392,7 +392,7 @@ private:
   uint8_t _wireMode = ADS112C04_RAW_MODE; //Default to using 'safe' settings (disable the IDAC current sources)
 
   // Resistance of the reference resistor
-  const float PT100_REFERENCE_RESISTOR = 1620.0;
+  const float PT100_REFERENCE_RESISTOR = 2470.0;
 
   // Amplifier gain setting
   // ** MAKE SURE THE CONFIG REGISTER 0 GAIN IS THE SAME AS THIS **
