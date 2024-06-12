@@ -271,9 +271,9 @@ float SFE_ADS112C04::readIbidiPT100Centigrade(void)
 {
     float ret_val = 0.0; // Return value
 
-    if (this->getWireMode == ADS112C04_2WIRE_MODE)
+    if (this->getWireMode() == ADS112C04_2WIRE_MODE)
     {
-        raw_voltage_union raw_v; // union to convert uint32_t to int32_t
+        raw_voltage_union raw_v; // union to convert uint16_t to int16_t
         unsigned long start_time = millis(); // Record the start time so we can timeout
         bool drdy = false; // DRDY (1 == new data is ready)
         float p_result, n_result;
@@ -307,7 +307,7 @@ float SFE_ADS112C04::readIbidiPT100Centigrade(void)
         }
 
         // Read the conversion result
-        if(ADS112C04_getConversionData(&raw_v.UINT32) == false)
+        if(ADS112C04_getConversionData(&raw_v.UINT16) == false)
         {
             if (_printDebug == true)
             {
@@ -316,15 +316,7 @@ float SFE_ADS112C04::readIbidiPT100Centigrade(void)
             return(ret_val);
         }
 
-        // The raw voltage is in the bottom 24 bits of raw_temp
-        // If we just do a <<8 we will multiply the result by 256
-        // Instead pad out the MSB with the MS bit of the 24 bits
-        // to preserve the two's complement
-        if ((raw_v.UINT32 & 0x00008000) == 0x00008000)
-        {
-            raw_v.UINT32 |= 0xFFFF0000;
-        }
-        p_result = raw_v.UINT32;
+        p_result = raw_v.UINT16;
 
         /* Reconfigure to Negative polarity and start conversion */
         this->setInputMultiplexer(ADS112C04_MUX_AIN0_AIN1);
@@ -346,7 +338,7 @@ float SFE_ADS112C04::readIbidiPT100Centigrade(void)
         }
 
         // Read the conversion result
-        if(ADS112C04_getConversionData(&raw_v.UINT32) == false)
+        if(ADS112C04_getConversionData(&raw_v.UINT16) == false)
         {
             if (_printDebug == true)
             {
@@ -355,15 +347,8 @@ float SFE_ADS112C04::readIbidiPT100Centigrade(void)
             return(ret_val);
         }
 
-        // The raw voltage is in the bottom 24 bits of raw_temp
-        // If we just do a <<8 we will multiply the result by 256
-        // Instead pad out the MSB with the MS bit of the 24 bits
-        // to preserve the two's complement
-        if ((raw_v.UINT32 & 0x00008000) == 0x00008000)
-        {
-            raw_v.UINT32 |= 0xFFFF0000;
-        }
-        n_result = raw_v.UINT32;
+
+        n_result = raw_v.UINT16;
 
         // 0,000009537 is the value of 1 LSB code of the ADC.
         // 1 LSB = (2*Vref/Gain)/2^16 . The ADC is 16-bit hence, 2^16
@@ -415,7 +400,7 @@ float SFE_ADS112C04::readPT100Centigrade(void)
   }
 
   // Read the conversion result
-  if(ADS112C04_getConversionData(&raw_v.UINT32) == false)
+  if(ADS112C04_getConversionData(&raw_v.UINT16) == false)
   {
     if (_printDebug == true)
     {
@@ -424,16 +409,8 @@ float SFE_ADS112C04::readPT100Centigrade(void)
     return(ret_val);
   }
 
-  // The raw voltage is in the bottom 24 bits of raw_temp
-  // If we just do a <<8 we will multiply the result by 256
-  // Instead pad out the MSB with the MS bit of the 24 bits
-  // to preserve the two's complement
-  if ((raw_v.UINT32 & 0x00008000) == 0x00008000)
-  {
-    raw_v.UINT32 |= 0xFFFF0000;
-  }
 
-  // raw_v.UINT32 now contains the ADC result, correctly signed
+  // raw_v.UINT16 now contains the ADC result, correctly signed
   // Now we need to convert it to temperature using the PT100 resistance,
   // the gain, excitation current and reference resistor value
 
@@ -442,7 +419,7 @@ float SFE_ADS112C04::readPT100Centigrade(void)
   // https://www.analog.com/media/en/technical-documentation/application-notes/AN709_0.pdf
 
   // 2^15 is 32768
-  RTD = ((float)raw_v.INT32) / 32768.0; // Load RTD with the scaled ADC value
+  RTD = ((float)raw_v.INT16) / 32768.0; // Load RTD with the scaled ADC value
   RTD *= PT100_REFERENCE_RESISTOR; // Multiply by the reference resistor
   // Use the correct gain for high and low temperatures
   if ((_wireMode == ADS112C04_4WIRE_HI_TEMP) || (_wireMode == ADS112C04_3WIRE_HI_TEMP) || (_wireMode == ADS112C04_2WIRE_HI_TEMP))
@@ -540,7 +517,7 @@ int32_t SFE_ADS112C04::readRawVoltage(uint8_t rate)
   }
 
   // Read the conversion result
-  if(ADS112C04_getConversionData(&raw_v.UINT32) == false)
+  if(ADS112C04_getConversionData(&raw_v.UINT16) == false)
   {
     if (_printDebug == true)
     {
@@ -572,7 +549,7 @@ int32_t SFE_ADS112C04::readRawVoltage(uint8_t rate)
 // Higher functions will need to convert the result to (e.g.) int32_t
 uint32_t SFE_ADS112C04::readADC(void)
 {
-  uint32_t ret_val; // The return value
+  uint16_t ret_val; // The return value
 
   // Read the conversion result
   if(ADS112C04_getConversionData(&ret_val) == false)
@@ -591,7 +568,7 @@ uint32_t SFE_ADS112C04::readADC(void)
 float SFE_ADS112C04::readInternalTemperature(uint8_t rate)
 {
   internal_temperature_union int_temp; // union to convert uint16_t to int16_t
-  uint32_t raw_temp; // The raw temperature from the ADC
+  uint16_t raw_temp; // The raw temperature from the ADC
   unsigned long start_time = millis(); // Record the start time so we can timeout
   bool drdy = false; // DRDY (1 == new data is ready)
   float ret_val = 0.0; // The return value
@@ -1098,10 +1075,10 @@ bool SFE_ADS112C04::ADS112C04_sendCommandWithValue(uint8_t command, uint8_t valu
 
 // Read the conversion result with count byte.
 // The conversion result is 16-bit two's complement (signed)
-// and is returned in the 16 lowest bits of the uint32_t conversionData.
+// and is returned in uint16_t conversionData.
 // Hence it will always appear positive.
 // Higher functions will need to take care of converting it to (e.g.) float or int32_t.
-bool SFE_ADS112C04::ADS112C04_getConversionDataWithCount(uint32_t *conversionData, uint8_t *count)
+bool SFE_ADS112C04::ADS112C04_getConversionDataWithCount(uint16_t *conversionData, uint8_t *count)
 {
   uint8_t RXByte[4] = {0};
 
@@ -1156,7 +1133,7 @@ bool SFE_ADS112C04::ADS112C04_getConversionDataWithCount(uint32_t *conversionDat
   }
 
   *count = RXByte[0];
-  *conversionData = ((uint32_t)RXByte[2]) | ((uint32_t)RXByte[1]<<8);
+  *conversionData = ((uint16_t)RXByte[2]) | ((uint16_t)RXByte[1]<<8);
   return(true);
 }
 
@@ -1165,7 +1142,7 @@ bool SFE_ADS112C04::ADS112C04_getConversionDataWithCount(uint32_t *conversionDat
 // and is returned in the 16 lowest bits of the uint32_t conversionData.
 // Hence it will always appear positive.
 // Higher functions will need to take care of converting it to (e.g.) float or int32_t.
-bool SFE_ADS112C04::ADS112C04_getConversionData(uint32_t *conversionData)
+bool SFE_ADS112C04::ADS112C04_getConversionData(uint16_t *conversionData)
 {
   uint8_t RXByte[2] = {0};
 
@@ -1210,6 +1187,6 @@ bool SFE_ADS112C04::ADS112C04_getConversionData(uint32_t *conversionData)
     return(false);
   }
 
-  *conversionData = ((uint32_t)RXByte[1]) | ((uint32_t)RXByte[0]<<8);
+  *conversionData = ((uint16_t)RXByte[1]) | ((uint16_t)RXByte[0]<<8);
   return(true);
 }

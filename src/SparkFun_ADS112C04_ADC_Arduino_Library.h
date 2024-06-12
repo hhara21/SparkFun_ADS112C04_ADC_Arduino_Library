@@ -413,8 +413,8 @@ private:
   bool ADS112C04_writeReg(uint8_t reg, uint8_t writeValue); // write a value to the selected register
   bool ADS112C04_readReg(uint8_t reg, uint8_t *readValue); // read a value from the selected register (returned in readValue)
 
-  bool ADS112C04_getConversionData(uint32_t *conversionData); // read the raw 24-bit conversion result
-  bool ADS112C04_getConversionDataWithCount(uint32_t *conversionData, uint8_t *count); // read the raw conversion result and count (if enabled)
+  bool ADS112C04_getConversionData(uint16_t *conversionData); // read the raw 16-bit conversion result
+  bool ADS112C04_getConversionDataWithCount(uint16_t *conversionData, uint8_t *count); // read the raw conversion result and count (if enabled)
 
   bool ADS112C04_sendCommand(uint8_t command); // write to the selected command register
   bool ADS112C04_sendCommandWithValue(uint8_t command, uint8_t value); // write a value to the selected command register
