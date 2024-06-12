@@ -6,7 +6,7 @@
   This example demonstrates how to read high temperatures in Centigrade
   using 4-wire mode.
 
-  At temperatures below 270C, the gain of the ADS122C04 can be set to 8
+  At temperatures below 270C, the gain of the ADS112C04 can be set to 8
   to provide maximal resolution.
 
   Between 270C and 850C, the gain needs to be reduced to 4 to avoid
@@ -20,9 +20,9 @@
 
 #include <Wire.h>
 
-#include <SparkFun_ADS122C04_ADC_Arduino_Library.h> // Click here to get the library: http://librarymanager/All#SparkFun_ADS122C0
+#include <SparkFun_ADS112C04_ADC_Arduino_Library.h> // Click here to get the library: http://librarymanager/All#SparkFun_ADS122C0
 
-SFE_ADS122C04 mySensor;
+SFE_ADS112C04 mySensor;
 
 void setup(void)
 {
@@ -42,9 +42,9 @@ void setup(void)
       ;
   }
 
-  mySensor.configureADCmode(ADS122C04_4WIRE_HI_TEMP); // Configure the PT100 for high temperature 4-wire mode
-  //mySensor.configureADCmode(ADS122C04_3WIRE_HI_TEMP); // Uncomment this line to configure the PT100 for high temperature 3-wire mode
-  //mySensor.configureADCmode(ADS122C04_2WIRE_HI_TEMP); // Uncomment this line to configure the PT100 for high temperature 2-wire mode
+  mySensor.configureADCmode(ADS112C04_4WIRE_HI_TEMP); // Configure the PT100 for high temperature 4-wire mode
+  //mySensor.configureADCmode(ADS112C04_3WIRE_HI_TEMP); // Uncomment this line to configure the PT100 for high temperature 3-wire mode
+  //mySensor.configureADCmode(ADS112C04_2WIRE_HI_TEMP); // Uncomment this line to configure the PT100 for high temperature 2-wire mode
 }
 
 void loop()

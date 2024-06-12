@@ -3,8 +3,10 @@
   By: Paul Clark (PaulZC)
   Date: May 5th, 2020
 
-  This example demonstrates how to read the PT100 temperature in Fahrenheit
-  using 4-wire mode
+  This example demonstrates how to read the PT100 temperature in Centigrade using a 2-wire connection
+
+  Note: the temperature reading will not be as accurate as with a 4-wire or 3-wire connection
+  as the ADS112C04 cannot compensate for the cable resistance
 
   Hardware Connections:
   Plug a Qwiic cable into the PT100 and a BlackBoard
@@ -23,32 +25,32 @@ void setup(void)
   Serial.begin(115200);
   while (!Serial)
     ; //Wait for user to open terminal
-  Serial.println(F("Qwiic PT100 Example"));
+  Serial.println(F("ibidi PT100 Example"));
 
   Wire.begin();
 
   //mySensor.enableDebugging(); //Uncomment this line to enable debug messages on Serial
 
-  if (mySensor.begin() == false) //Connect to the PT100 using the defaults: Address 0x45 and the Wire port
+  if (mySensor.begin() == false) //Connect to the PT100 using the defaults: Address 0x40 and the Wire port
   {
-    Serial.println(F("Qwiic PT100 not detected at default I2C address. Please check wiring. Freezing."));
+    Serial.println(F("PT100 not detected at default I2C address. Please check wiring. Freezing."));
     while (1)
       ;
   }
 
-  mySensor.configureADCmode(ADS112C04_4WIRE_MODE); // Configure the PT100 for 4-wire mode
+  mySensor.configureADCmode(ADS112C04_2WIRE_MODE); // Configure the PT100 for 2-wire mode
 
 }
 
 void loop()
 {
   // Get the temperature in Centigrade
-  float temperature = mySensor.readPT100Fahrenheit();
+  float temperature = mySensor.readIbidiPT100Centigrade();
 
   // Print the temperature
   Serial.print(F("The temperature is: "));
   Serial.print(temperature);
-  Serial.println(F("F"));
+  Serial.println(F("C"));
 
   delay(250); //Don't pound too hard on the I2C bus
 }

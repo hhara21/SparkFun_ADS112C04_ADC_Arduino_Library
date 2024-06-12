@@ -3,7 +3,7 @@
   By: Paul Clark (PaulZC)
   Date: May 5th, 2020
 
-  This example demonstrates how to put the ADS122C04 into power down mode
+  This example demonstrates how to put the ADS112C04 into power down mode
 
   Hardware Connections:
   Plug a Qwiic cable into the PT100 and a BlackBoard
@@ -13,9 +13,9 @@
 
 #include <Wire.h>
 
-#include <SparkFun_ADS122C04_ADC_Arduino_Library.h> // Click here to get the library: http://librarymanager/All#SparkFun_ADS122C0
+#include <SparkFun_ADS112C04_ADC_Arduino_Library.h> // Click here to get the library: http://librarymanager/All#SparkFun_ADS122C0
 
-SFE_ADS122C04 mySensor;
+SFE_ADS112C04 mySensor;
 
 void setup(void)
 {
@@ -35,13 +35,13 @@ void setup(void)
       ;
   }
 
-  mySensor.configureADCmode(ADS122C04_4WIRE_MODE); // Configure the PT100 for 4-wire mode
+  mySensor.configureADCmode(ADS112C04_4WIRE_MODE); // Configure the PT100 for 4-wire mode
 
 }
 
 void loop()
 {
-  // Get the temperature in Centigrade - this also wakes up the ADS122C04 (by doing a start)
+  // Get the temperature in Centigrade - this also wakes up the ADS112C04 (by doing a start)
   float temperature = mySensor.readPT100Centigrade();
 
   // Print the temperature
@@ -49,8 +49,8 @@ void loop()
   Serial.print(temperature);
   Serial.println(F("C"));
 
-  // Put the ADS122C04 into power down mode
-  Serial.println(F("Putting the ADS122C04 into power down mode..."));
+  // Put the ADS112C04 into power down mode
+  Serial.println(F("Putting the ADS112C04 into power down mode..."));
 
   mySensor.powerdown();
 

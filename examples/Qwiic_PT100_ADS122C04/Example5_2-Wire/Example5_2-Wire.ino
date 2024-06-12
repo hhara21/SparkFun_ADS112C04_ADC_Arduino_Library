@@ -6,7 +6,7 @@
   This example demonstrates how to read the PT100 temperature in Centigrade using a 2-wire connection
 
   Note: the temperature reading will not be as accurate as with a 4-wire or 3-wire connection
-  as the ADS122C04 cannot compensate for the cable resistance
+  as the ADS112C04 cannot compensate for the cable resistance
 
   Hardware Connections:
   Plug a Qwiic cable into the PT100 and a BlackBoard
@@ -16,9 +16,9 @@
 
 #include <Wire.h>
 
-#include <SparkFun_ADS122C04_ADC_Arduino_Library.h> // Click here to get the library: http://librarymanager/All#SparkFun_ADS122C0
+#include <SparkFun_ADS112C04_ADC_Arduino_Library.h> // Click here to get the library: http://librarymanager/All#SparkFun_ADS122C0
 
-SFE_ADS122C04 mySensor;
+SFE_ADS112C04 mySensor;
 
 void setup(void)
 {
@@ -38,7 +38,7 @@ void setup(void)
       ;
   }
 
-  mySensor.configureADCmode(ADS122C04_2WIRE_MODE); // Configure the PT100 for 2-wire mode
+  mySensor.configureADCmode(ADS112C04_2WIRE_MODE); // Configure the PT100 for 2-wire mode
 
 }
 

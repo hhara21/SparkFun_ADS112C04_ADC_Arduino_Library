@@ -4,7 +4,7 @@
   Date: May 5th, 2020
 
   This example demonstrates how to read the PT100 temperature in Centigrade
-  using 4-wire mode and also read the ADS122C04 internal temperature
+  using 4-wire mode and also read the ADS112C04 internal temperature
 
   Hardware Connections:
   Plug a Qwiic cable into the PT100 and a BlackBoard
@@ -14,9 +14,9 @@
 
 #include <Wire.h>
 
-#include <SparkFun_ADS122C04_ADC_Arduino_Library.h> // Click here to get the library: http://librarymanager/All#SparkFun_ADS122C0
+#include <SparkFun_ADS112C04_ADC_Arduino_Library.h> // Click here to get the library: http://librarymanager/All#SparkFun_ADS122C0
 
-SFE_ADS122C04 mySensor;
+SFE_ADS112C04 mySensor;
 
 void setup(void)
 {
@@ -36,7 +36,7 @@ void setup(void)
       ;
   }
 
-  mySensor.configureADCmode(ADS122C04_4WIRE_MODE); // Configure the PT100 for 4-wire mode
+  mySensor.configureADCmode(ADS112C04_4WIRE_MODE); // Configure the PT100 for 4-wire mode
 
 }
 

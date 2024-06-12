@@ -3,7 +3,7 @@
   By: Paul Clark (PaulZC)
   Date: May 5th, 2020
 
-  When the ADS122C04 is initialised by .begin, it is configured for raw mode (which disables the IDAC).
+  When the ADS112C04 is initialised by .begin, it is configured for raw mode (which disables the IDAC).
   If you want to manually configure the chip, you can. This example demonstrates how.
 
   The IDAC current source is disabled, the gain is set to 1 and the internal 2.048V reference is selected.
@@ -21,9 +21,9 @@
 
 #include <Wire.h>
 
-#include <SparkFun_ADS122C04_ADC_Arduino_Library.h> // Click here to get the library: http://librarymanager/All#SparkFun_ADS122C0
+#include <SparkFun_ADS112C04_ADC_Arduino_Library.h> // Click here to get the library: http://librarymanager/All#SparkFun_ADS122C0
 
-SFE_ADS122C04 mySensor;
+SFE_ADS112C04 mySensor;
 
 void setup(void)
 {
@@ -41,26 +41,26 @@ void setup(void)
       ;
   }
 
-  // The ADS122C04 will now be configured for raw mode.
+  // The ADS112C04 will now be configured for raw mode.
   // We can override the ADC mode using these commands:
 
-  mySensor.setInputMultiplexer(ADS122C04_MUX_AIN1_AIN0); // Route AIN1 and AIN0 to AINP and AINN
-  mySensor.setGain(ADS122C04_GAIN_1); // Set the gain to 1
-  mySensor.enablePGA(ADS122C04_PGA_DISABLED); // Disable the Programmable Gain Amplifier
-  mySensor.setDataRate(ADS122C04_DATA_RATE_20SPS); // Set the data rate (samples per second) to 20
-  mySensor.setOperatingMode(ADS122C04_OP_MODE_NORMAL); // Disable turbo mode
-  mySensor.setConversionMode(ADS122C04_CONVERSION_MODE_SINGLE_SHOT); // Use single shot mode
-  mySensor.setVoltageReference(ADS122C04_VREF_INTERNAL); // Use the internal 2.048V reference
-  mySensor.enableInternalTempSensor(ADS122C04_TEMP_SENSOR_OFF); // Disable the temperature sensor
-  mySensor.setDataCounter(ADS122C04_DCNT_DISABLE); // Disable the data counter (Note: the library does not currently support the data count)
-  mySensor.setDataIntegrityCheck(ADS122C04_CRC_DISABLED); // Disable CRC checking (Note: the library does not currently support data integrity checking)
-  mySensor.setBurnOutCurrent(ADS122C04_BURN_OUT_CURRENT_OFF); // Disable the burn-out current
-  mySensor.setIDACcurrent(ADS122C04_IDAC_CURRENT_OFF); // Disable the IDAC current
-  mySensor.setIDAC1mux(ADS122C04_IDAC1_DISABLED); // Disable IDAC1
-  mySensor.setIDAC2mux(ADS122C04_IDAC2_DISABLED); // Disable IDAC2
+  mySensor.setInputMultiplexer(ADS112C04_MUX_AIN1_AIN0); // Route AIN1 and AIN0 to AINP and AINN
+  mySensor.setGain(ADS112C04_GAIN_1); // Set the gain to 1
+  mySensor.enablePGA(ADS112C04_PGA_DISABLED); // Disable the Programmable Gain Amplifier
+  mySensor.setDataRate(ADS112C04_DATA_RATE_20SPS); // Set the data rate (samples per second) to 20
+  mySensor.setOperatingMode(ADS112C04_OP_MODE_NORMAL); // Disable turbo mode
+  mySensor.setConversionMode(ADS112C04_CONVERSION_MODE_SINGLE_SHOT); // Use single shot mode
+  mySensor.setVoltageReference(ADS112C04_VREF_INTERNAL); // Use the internal 2.048V reference
+  mySensor.enableInternalTempSensor(ADS112C04_TEMP_SENSOR_OFF); // Disable the temperature sensor
+  mySensor.setDataCounter(ADS112C04_DCNT_DISABLE); // Disable the data counter (Note: the library does not currently support the data count)
+  mySensor.setDataIntegrityCheck(ADS112C04_CRC_DISABLED); // Disable CRC checking (Note: the library does not currently support data integrity checking)
+  mySensor.setBurnOutCurrent(ADS112C04_BURN_OUT_CURRENT_OFF); // Disable the burn-out current
+  mySensor.setIDACcurrent(ADS112C04_IDAC_CURRENT_OFF); // Disable the IDAC current
+  mySensor.setIDAC1mux(ADS112C04_IDAC1_DISABLED); // Disable IDAC1
+  mySensor.setIDAC2mux(ADS112C04_IDAC2_DISABLED); // Disable IDAC2
 
   mySensor.enableDebugging(Serial); //Enable debug messages on Serial
-  mySensor.printADS122C04config(); //Print the configuration
+  mySensor.printADS112C04config(); //Print the configuration
   mySensor.disableDebugging(); //Enable debug messages on Serial
 }
 
@@ -73,7 +73,7 @@ void loop()
 
   // Wait for DRDY to go valid (by reading Config Register 2)
   // (You could read the DRDY pin instead, especially if you are using continuous conversion mode.)
-  while((drdy == false) && (millis() < (start_time + ADS122C04_CONVERSION_TIMEOUT)))
+  while((drdy == false) && (millis() < (start_time + ADS112C04_CONVERSION_TIMEOUT)))
   {
     delay(5); // Don't pound the I2C bus too hard
     drdy = mySensor.checkDataReady(); // Read DRDY from Config Register 2
