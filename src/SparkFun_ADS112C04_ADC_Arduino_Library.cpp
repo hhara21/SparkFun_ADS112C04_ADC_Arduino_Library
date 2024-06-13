@@ -148,7 +148,7 @@ bool SFE_ADS112C04::configureADCmode(uint8_t wire_mode, uint8_t rate)
   else if (wire_mode == ADS112C04_2WIRE_MODE) // 2-wire mode
   {
     initParams.inputMux = ADS112C04_MUX_AIN1_AIN0; // Route AIN1 to AINP and AIN0 to AINN
-    initParams.gainLevel = ADS112C04_GAIN_8; // Set the gain to 8
+    initParams.gainLevel = ADS112C04_GAIN_16; // Set the gain to 16
     initParams.pgaBypass = ADS112C04_PGA_ENABLED; // The PGA must be enabled for gains >= 8
     initParams.dataRate = rate; // Set the data rate (samples per second). Defaults to 20
     initParams.opMode = ADS112C04_OP_MODE_TURBO; // Disable turbo mode
@@ -467,6 +467,93 @@ float SFE_ADS112C04::readPT100Centigrade(void)
 float SFE_ADS112C04::readPT100Fahrenheit(void) // Read the temperature in Fahrenheit
 {
   return((readPT100Centigrade() * 1.8) + 32.0); // Read Centigrade and convert to Fahrenheit
+}
+
+// Compute the temperature from a given resistance
+// Only works for positive Temperature range
+// See PT100 datasheet
+float SFE_ADS112C04::computeTemperatureCentigrade(float rtd_val)
+{
+  float ret_val = 0.0f;
+  // Calculate the temperature
+  ret_val = rtd_val * -23.10e-9;
+  ret_val += 17.5848089e-6;
+  ret_val = sqrt(ret_val);
+  ret_val -= 3.9083e-3;
+  ret_val /= -1.155e-6;
+
+  //  Check if the temperature is positive, return if it is
+  if (ret_val >= 0.0)
+    return(ret_val);
+
+  return(0.0f);
+}
+
+// Read out the RTD value 
+float SFE_ADS112C04::readRTD(void)
+{
+  raw_voltage_union raw_v; // union to convert uint32_t to int32_t
+  unsigned long start_time = millis(); // Record the start time so we can timeout
+  bool drdy = false; // DRDY (1 == new data is ready)
+  float ret_val = 0.0; // Return value
+
+  // Start the conversion (assumes we are using single shot mode)
+  start();
+
+  // Wait for DRDY to go valid
+  while((drdy == false) && (millis() < (start_time + ADS112C04_CONVERSION_TIMEOUT)))
+  {
+    delay(1); // Don't pound the bus too hard
+    drdy = checkDataReady();
+  }
+
+  // Check if we timed out
+  if (drdy == false)
+  {
+    if (_printDebug == true)
+    {
+      _debugPort->println(F("readPT100Centigrade: checkDataReady timed out"));
+    }
+    return(ret_val);
+  }
+
+  // Read the conversion result
+  if(ADS112C04_getConversionData(&raw_v.UINT16) == false)
+  {
+    if (_printDebug == true)
+    {
+      _debugPort->println(F("readPT100Centigrade: ADS112C04_getConversionData failed"));
+    }
+    return(ret_val);
+  }
+
+
+  // raw_v.UINT16 now contains the ADC result, correctly signed
+  // Now we need to convert it to temperature using the PT100 resistance,
+  // the gain, excitation current and reference resistor value
+
+  // Formulae are taken from:
+  // http://www.ti.com/lit/an/sbaa275/sbaa275.pdf
+  // https://www.analog.com/media/en/technical-documentation/application-notes/AN709_0.pdf
+  // ratiometric measurement will not consider negative values so we can ignore the MSBit
+  // 2^15 is 32768
+  ret_val = ((float)raw_v.INT16) / 32768.0; // Load RTD with the scaled ADC value
+  ret_val *= PT100_REFERENCE_RESISTOR; // Multiply by the reference resistor
+  // Use the correct gain for high and low temperatures
+  if ((_wireMode == ADS112C04_4WIRE_HI_TEMP) || (_wireMode == ADS112C04_3WIRE_HI_TEMP) || (_wireMode == ADS112C04_2WIRE_HI_TEMP))
+  {
+    ret_val /= PT100_AMP_GAIN_HI_TEMP; // Divide by the amplifier gain for high temperatures
+  }
+  else
+  {
+    ret_val /= PT100_AMPLIFIER_GAIN; // Divide by the amplifier gain for low temperatures
+  }
+  if ((_wireMode == ADS112C04_3WIRE_MODE) || (_wireMode == ADS112C04_3WIRE_HI_TEMP)) // If we are using 3-wire mode
+  {
+    ret_val *= 2.0; // 3-wire mode needs a factor of 2
+  }
+
+    return ret_val;
 }
 
 // Read the raw signed 16-bit ADC value as int16_t

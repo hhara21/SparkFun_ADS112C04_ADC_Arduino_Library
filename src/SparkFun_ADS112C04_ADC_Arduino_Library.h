@@ -322,6 +322,9 @@ public:
   float readPT100Centigrade(void); // Read the PT100 temperature in Centigrade
   float readPT100Fahrenheit(void); // Read the PT100 temperature in Fahrenheit
 
+  float computeTemperatureCentigrade(float rtd_val); // convert the RTD value into Temperature
+  float readRTD(void);
+
   // Read the raw signed 16-bit ADC value as int16_t
   // This uses the internal 2.048V reference with the gain set to 1
   // The LSB is 2.048 / 2^15 = 0.0625 uV (0.0625 microvolts)
@@ -392,11 +395,11 @@ private:
   uint8_t _wireMode = ADS112C04_RAW_MODE; //Default to using 'safe' settings (disable the IDAC current sources)
 
   // Resistance of the reference resistor
-  const float PT100_REFERENCE_RESISTOR = 2470.0;
+  const float PT100_REFERENCE_RESISTOR = 2500.0;
 
   // Amplifier gain setting
   // ** MAKE SURE THE CONFIG REGISTER 0 GAIN IS THE SAME AS THIS **
-  const float PT100_AMPLIFIER_GAIN = 8.0;
+  const float PT100_AMPLIFIER_GAIN = 16.0;
   const float PT100_AMP_GAIN_HI_TEMP = 4.0;
 
   // Internal temperature sensor resolution
